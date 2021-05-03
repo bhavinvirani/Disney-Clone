@@ -2,11 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import ImgSlider from "./ImgSlider"
 import Viewers from "./Viewers"
+import Movies from "./Movies"
+
 const Home = (props) => {
     return (
         <Container>
             <ImgSlider />
             <Viewers />
+            <Movies />
         </Container>
     )
 }
@@ -14,8 +17,8 @@ const Home = (props) => {
 export default Home;
 
 const  Container = styled.main`
-    min-height: calc(100vh);
-    padding: 0 calc(3.5vh + 5px);
+    min-height: calc(100vh - 70px);
+    padding: 0 5.5vh;
     padding-top: 70px;
     position: relative;
     overflow-x: hidden;

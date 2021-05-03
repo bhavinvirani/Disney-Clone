@@ -37,19 +37,18 @@ const Header = (props) => {
 };
 
 const Nav = styled.nav`
+  height: 70px;
   position: fixed;
   top: 0;
   width: 100%;
-  height: 70px;
   background-color: #090b13;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 35px;
+  padding: 0 36px;
   letter-spacing: 16px;
-  z-index: 1;
+  z-index: 999;
   overflow-x: hidden;
-
 `;
 
 const Logo = styled.a`
@@ -102,17 +101,16 @@ const NavMenu = styled.div`
                 content: "";
                 background-color: rgb(249, 249, 249);
                 border-radius: 0px, 0px, 4px, 4px;
-                bottom: -6px;
                 position: absolute;
                 height: 2px;
                 left: 0px;
-                opacity: 0;
                 right: 0px;
+                bottom: -6px;
                 visibility: hidden;
                 width: auto;
                 transform-origin: left center;
-                transform: scaleX(0);
                 transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+                transform: scaleX(0);
             }
         }
  

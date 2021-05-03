@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Main = (props) => {
+const Login = (props) => {
     return (
         <Container>
             <Content>
@@ -71,7 +71,7 @@ const CTA = styled.div`
     max-width: 650px;
     width: 100%;
     flex-direction: column;
-
+    align-items: center;
 `;
 
 const CTALogoOne = styled.img`
@@ -90,14 +90,14 @@ const CTALogoTwo = styled.img`
 `;
 
 const SignUp = styled.a`
+    width: 100%;
     font-weight: bold;
     color: #f9f9f9;
     background-color: #0063e5;
-    width: 100%;
     margin-bottom: 8px;
     letter-spacing: 1.5px;
     font-size: 18px;
-    padding: 16px 0;
+    padding: 17px 0;
     border: 1px solid transparent;
     border-radius: 4px;
     transition: all 0.2s ease 0s;
@@ -113,4 +113,4 @@ const Description = styled.p`
     line-height: 1.5;
 `;
 
-export default Main;
+export default Login;
