@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Login = (props) => {
+const Main = (props) => {
     return (
         <Container>
             <Content>
@@ -113,4 +113,4 @@ const Description = styled.p`
     line-height: 1.5;
 `;
 
-export default Login;
+export default Main;

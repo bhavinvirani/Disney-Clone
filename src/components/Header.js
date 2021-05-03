@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Header = (props) => {
+
     return (
         <Nav>
             <Logo>
@@ -10,7 +11,6 @@ const Header = (props) => {
             <NavMenu>
 
                 <a href="/TV">
-                    {/* <img src="/images/home-icon.svg" /> */}
                     <span>TV</span>
                 </a>
                 <a href="/MOVIES">
@@ -28,9 +28,10 @@ const Header = (props) => {
                 <a href="/WATCHLIST">
                     <span>WATCHLIST</span>
                 </a>
-                
+                <input type="text" placeholder="Serche"></input>
             </NavMenu>
-            <Login>LOGIN</Login>
+            <LoginButton>LOGIN</LoginButton>
+            {/* <UserImg src="https://pbs.twimg.com/profile_images/1289937977594937344/YGxM3xrn_400x400.jpg"/> */}
         </Nav>
     );
 };
@@ -47,12 +48,15 @@ const Nav = styled.nav`
   padding: 0 35px;
   letter-spacing: 16px;
   z-index: 1;
+  overflow-x: hidden;
+
 `;
 
 const Logo = styled.a`
   padding: 0;
   margin-right: 6px;
   width: 80px;
+  min-width: 70px;
   ${"" /* margin-top: 4px; */}
   max-height: 70px;
   display: inline-block;
@@ -112,28 +116,48 @@ const NavMenu = styled.div`
             }
         }
  
-   &:hover {
-       span:before {
-           transform: scaleX(1);
-           visibility: visible;
-           opacity: 1 !important;
-       }
-   }
-}
+        &:hover {
+            span:before {
+                transform: scaleX(1);
+                visibility: visible;
+                opacity: 1 !important;
+            }
+         }
+    }
+    input {
+        background-color: #090b13;
+        color: rgb(249, 249, 249);
+        border-left:none;
+        border-right:none;
+        border-top:none;
+        border: 1px solid transparent;
+        border-bottom: 1px solid #f9f9f9;
+        font-size: 15px;
+        font-weight: 250;
 
-   ${"" /* hide navbar for small screen */}
+        &:hover,
+        &:focus {
+            outline: 0;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #575756;
+            background-position: 100% center;
+        }
+    }
+        
    @media (max-width: 768px) {
        display: none;
    }
 `;
 
-const Login = styled.a`
+
+
+const LoginButton = styled.a`
     background-color: rgba(0, 0, 0, 0.6);
     padding: 8px 16px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     border: 1px solid #f9f9f9;
-    border-radius: 4px;
+    border-radius: 3px;
     transition: all 0.2s ease 0s;
 
     &:hover {
@@ -143,5 +167,12 @@ const Login = styled.a`
         cursor:pointer;
     }
 `;
+
+const UserImg  = styled.img `
+    height: 43px;
+    width: 43px;
+    border-radius: 50%;
+    cursor: pointer;
+`
 
 export default Header;
