@@ -1,176 +1,252 @@
-import React from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { auth, provider } from "../firebase";
+import {
+  selectUserName,
+  selectUserPhoto,
+  setUserLoginDetails,
+  setSignOutState,
+} from "../features/user/userSlice";
 
 const Header = (props) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const userName = useSelector(selectUserName);
+  const userPhoto = useSelector(selectUserPhoto);
 
-    return (
-        <Nav>
-            <Logo>
-                <img src="/images/logo.svg" alt="Desny+" />
-            </Logo>
-            <NavMenu>
+  // function run only whene userName change.
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUser(user);
+        history.push("/home");      // if user exist then add to the history
+      }
+    });
+  }, [userName]);
 
-                <a href="/TV">
-                    <span>TV</span>
-                </a>
-                <a href="/MOVIES">
-                    <span>MOVIES</span>
-                </a>
-                <a href="/ORIGINALS">
-                    <span>ORIGINALS</span>
-                </a>
-                <a href="/SERIES">
-                    <span>SERIES</span>
-                </a>
-                <a href="/SPORTS">
-                    <span>SPORTS</span>
-                </a>
-                <a href="/WATCHLIST">
-                    <span>WATCHLIST</span>
-                </a>
-                <input type="text" placeholder="Serche"></input>
-            </NavMenu>
-            <LoginButton>LOGIN</LoginButton>
-            {/* <UserImg src="https://pbs.twimg.com/profile_images/1289937977594937344/YGxM3xrn_400x400.jpg"/> */}
-        </Nav>
+  const handleAuth = () => {
+    if (!userName) {          // handle login
+      auth  
+        .signInWithPopup(provider)  // login google popup
+        .then((result) => {
+          setUser(result.user);     // calling setUser and pass data comes from provider
+        })
+        .catch((error) => {
+          alert(error.message);     // show error in authantication
+        });
+    } else if (userName) {    // handle logout
+      auth
+        .signOut()
+        .then(() => {
+          dispatch(setSignOutState());
+          history.push("/");
+        })
+        .catch((err) => alert(err.message));
+    }
+  };
+
+  const setUser = (user) => {
+    dispatch(
+      setUserLoginDetails({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+      })
     );
+  };
+
+  return (
+    <Nav>
+
+      {!userName ?
+        <Logo>
+          <img src="/images/logo.svg" alt="Disney+" />
+        </Logo> :
+        <Logo>
+          <a href="/">
+            <img src="/images/logo.svg" alt="Disney+" />
+          </a>
+        </Logo>
+      }
+
+      {!userName ? (
+        <Login onClick={handleAuth}>Login</Login>
+      ) : (
+        <>
+          <NavMenu>
+            <a href="/tv">
+              <span>TV</span>
+            </a>
+            <a href="#">
+              <span>MOVIES</span>
+            </a>
+            <a href="#">
+              <span>ORIGINALS</span>
+            </a>
+            <a href="#">
+              <span>SERIES</span>
+            </a>
+            <a href="#">
+              <span>SPORTS</span>
+            </a>
+            <a href="#">
+              <span>NEWS</span>
+            </a>
+          </NavMenu>
+          <SignOut>
+            <UserImg src={userPhoto} alt={userName} />
+            <DropDown>
+              <span onClick={handleAuth}>Sign out</span>
+            </DropDown>
+          </SignOut>
+        </>
+      )}
+    </Nav>
+  );
 };
 
 const Nav = styled.nav`
-  height: 70px;
   position: fixed;
   top: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
+  height: 70px;
   background-color: #090b13;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 36px;
   letter-spacing: 16px;
-  z-index: 999;
-  overflow-x: hidden;
+  z-index: 3;
 `;
 
 const Logo = styled.a`
   padding: 0;
-  margin-right: 6px;
   width: 80px;
-  min-width: 70px;
-  ${"" /* margin-top: 4px; */}
+  margin-top: 4px;
   max-height: 70px;
+  font-size: 0;
   display: inline-block;
   img {
-    margin-bottom: 4px;
     display: block;
     width: 100%;
   }
 `;
 
 const NavMenu = styled.div`
-   display: flex;
-   align-items: center;
-   flex-flow: row nowrap;
-   height: 100%;
-   justify-content: flex-end;
-   position: relative;
-   margin-right: auto;
-   margin-left: 24px; 
-
-   a {
-       display: flex;
-       align-items: center;
-       padding: 0 12px;
-
-       ${'' /* img {
-           height:20px;
-           width:20px;
-           min-width:20px;
-           z-index: auto;
-       } */}
-
-        span {
-            color: rgb(249, 249, 249);
-            font-size: 13px;
-            letter-spacing: 2.2px;
-            line-height: 1.08;
-            padding: 2px 0;
-            white-space: nowrap;
-            position: relative;
-        
-            &:before {
-                content: "";
-                background-color: rgb(249, 249, 249);
-                border-radius: 0px, 0px, 4px, 4px;
-                position: absolute;
-                height: 2px;
-                left: 0px;
-                right: 0px;
-                bottom: -6px;
-                visibility: hidden;
-                width: auto;
-                transform-origin: left center;
-                transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
-                transform: scaleX(0);
-            }
-        }
- 
-        &:hover {
-            span:before {
-                transform: scaleX(1);
-                visibility: visible;
-                opacity: 1 !important;
-            }
-         }
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+  justify-content: flex-end;
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  margin-right: auto;
+  margin-left: 25px;
+  a {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    img {
+      height: 20px;
+      min-width: 20px;
+      width: 20px;
+      z-index: auto;
     }
-    input {
-        background-color: #090b13;
-        color: rgb(249, 249, 249);
-        border-left:none;
-        border-right:none;
-        border-top:none;
-        border: 1px solid transparent;
-        border-bottom: 1px solid #f9f9f9;
-        font-size: 15px;
-        font-weight: 250;
-
-        &:hover,
-        &:focus {
-            outline: 0;
-            border: 1px solid transparent;
-            border-bottom: 1px solid #575756;
-            background-position: 100% center;
-        }
+    span {
+      color: rgb(249, 249, 249);
+      font-size: 13px;
+      letter-spacing: 1.42px;
+      line-height: 1.08;
+      padding: 2px 0px;
+      white-space: nowrap;
+      position: relative;
+      &:before {
+        background-color: rgb(249, 249, 249);
+        border-radius: 0px 0px 4px 4px;
+        bottom: -6px;
+        content: "";
+        height: 2px;
+        left: 0px;
+        opacity: 0;
+        position: absolute;
+        right: 0px;
+        transform-origin: left center;
+        transform: scaleX(0);
+        transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+        visibility: hidden;
+        width: auto;
+      }
     }
-        
-   @media (max-width: 768px) {
-       display: none;
-   }
-`;
-
-
-
-const LoginButton = styled.a`
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 8px 16px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border: 1px solid #f9f9f9;
-    border-radius: 3px;
-    transition: all 0.2s ease 0s;
-
     &:hover {
-        background-color: #f9f9f9;
-        color: #000;
-        border-color:transparent;
-        cursor:pointer;
+      span:before {
+        transform: scaleX(1);
+        visibility: visible;
+        opacity: 1 !important;
+      }
     }
+  }
+  ${'' /* @media (max-width: 768px) {
+    display: none;
+  } */}
 `;
 
-const UserImg  = styled.img `
-    height: 43px;
-    width: 43px;
+const Login = styled.a`
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px 16px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 1px solid #f9f9f9;
+  border-radius: 4px;
+  transition: all 0.2s ease 0s;
+  &:hover {
+    background-color: #f9f9f9;
+    color: #000;
+    border-color: transparent;
+  }
+`;
+
+const UserImg = styled.img`
+  height: 100%;
+`;
+
+const DropDown = styled.div`
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  background: rgb(19, 19, 19);
+  border: 1px solid rgba(151, 151, 151, 0.34);
+  border-radius: 4px;
+  box-shadow: rgb(0 0 0 / 50%) 0px 0px 18px 0px;
+  padding: 10px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  width: 100px;
+  opacity: 0;
+`;
+
+const SignOut = styled.div`
+  position: relative;
+  height: 48px;
+  width: 48px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  ${UserImg} {
     border-radius: 50%;
-    cursor: pointer;
-`
+    width: 100%;
+    height: 100%;
+  }
+  &:hover {
+    ${DropDown} {
+      opacity: 1;
+      transition-duration: 1s;
+    }
+  }
+`;
 
 export default Header;
